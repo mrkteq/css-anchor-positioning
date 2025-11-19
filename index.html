@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Anchor Positioning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f0f23;
+            color: #fff;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 50px;
+            font-size: 1.1rem;
+        }
+
+        .demos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .demo {
+            background: #1a1a2e;
+            border: 2px solid #2a2a3e;
+            border-radius: 16px;
+            padding: 30px;
+            transition: border-color 0.3s;
+        }
+
+        .demo:hover {
+            border-color: #667eea;
+        }
+
+        .demo-header {
+            margin-bottom: 20px;
+        }
+
+        .demo-number {
+            display: inline-block;
+            background: #667eea;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .demo-title {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .demo-description {
+            color: #888;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .demo-area {
+            background: #0a0a15;
+            border-radius: 12px;
+            padding: 60px 40px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .code-toggle {
+            background: #2a2a3e;
+            border: 1px solid #3a3a4e;
+            color: #667eea;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            width: 100%;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .code-toggle:hover {
+            background: #3a3a4e;
+            border-color: #667eea;
+        }
+
+        .code-block {
+            background: #000;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 15px;
+            overflow-x: auto;
+            display: none;
+            border: 1px solid #2a2a3e;
+        }
+
+        .code-block.active {
+            display: block;
+        }
+
+        .code-block code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            color: #a8dadc;
+            white-space: pre;
+            display: block;
+        }
+
+        .highlight {
+            color: #f1fa8c;
+            font-weight: bold;
+        }
+
+        .comment {
+            color: #6272a4;
+        }
+
+        /* Demo 1: Simple Tooltip */
+        .btn-1 {
+            anchor-name: --btn1;
+            padding: 16px 32px;
+            background: #667eea;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .tooltip-1 {
+            position: absolute;
+            position-anchor: --btn1;
+            bottom: calc(anchor(top) - 12px);
+            left: anchor(center);
+            translate: -50% 0;
+            
+            background: #000;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .btn-1:hover + .tooltip-1 {
+            opacity: 1;
+        }
+
+        /* Demo 2: Side Popover */
+        .trigger-2 {
+            anchor-name: --trigger2;
+            width: 50px;
+            height: 50px;
+            background: #764ba2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .trigger-2:hover {
+            transform: scale(1.1);
+        }
+
+        .popover-2 {
+            position: absolute;
+            position-anchor: --trigger2;
+            left: calc(anchor(right) + 20px);
+            top: anchor(center);
+            translate: 0 -50%;
+            
+            background: #1a1a2e;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #764ba2;
+            min-width: 200px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .trigger-2:hover + .popover-2 {
+            opacity: 1;
+        }
+
+        /* Demo 3: Bottom Dropdown */
+        .menu-btn-3 {
+            anchor-name: --menu3;
+            padding: 12px 24px;
+            background: #f093fb;
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .dropdown-3 {
+            position: absolute;
+            position-anchor: --menu3;
+            top: calc(anchor(bottom) + 8px);
+            left: anchor(left);
+            
+            background: #1a1a2e;
+            border: 2px solid #f093fb;
+            border-radius: 8px;
+            min-width: 180px;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+            overflow: hidden;
+        }
+
+        .menu-btn-3:focus + .dropdown-3,
+        .menu-btn-3:active + .dropdown-3 {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .dropdown-3 a {
+            display: block;
+            padding: 12px 16px;
+            color: #fff;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .dropdown-3 a:hover {
+            background: rgba(240, 147, 251, 0.2);
+        }
+
+        /* Demo 4: Badge Indicator */
+        .card-4 {
+            anchor-name: --card4;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 30px;
+            border-radius: 12px;
+            width: 200px;
+        }
+
+        .badge-4 {
+            position: absolute;
+            position-anchor: --card4;
+            top: anchor(top);
+            left: anchor(right);
+            translate: -50% -50%;
+            
+            background: #ff4757;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border: 3px solid #0a0a15;
+        }
+
+        /* Demo 5: Connected Label */
+        .input-5 {
+            anchor-name: --input5;
+            padding: 14px 18px;
+            background: #1a1a2e;
+            border: 2px solid #2a2a3e;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            width: 250px;
+            transition: border-color 0.3s;
+        }
+
+        .input-5:focus {
+            border-color: #667eea;
+        }
+
+        .label-5 {
+            position: absolute;
+            position-anchor: --input5;
+            bottom: calc(anchor(top) - 8px);
+            left: anchor(left);
+            translate: 4px 0;
+            
+            background: #0a0a15;
+            padding: 4px 8px;
+            font-size: 0.85rem;
+            color: #888;
+            opacity: 0;
+            transition: opacity 0.3s, color 0.3s;
+            pointer-events: none;
+        }
+
+        .input-5:focus + .label-5 {
+            opacity: 1;
+            color: #667eea;
+        }
+
+        .input-5:not(:placeholder-shown) + .label-5 {
+            opacity: 1;
+        }
+
+        @media (max-width: 900px) {
+            .demos-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CSS Anchor Positioning</h1>
+        <p class="subtitle">Allows placing elements anywhere on the page relative to an "anchor element", without regard to the layout of other elements besides their containing block</p>
+
+        <div class="demos-grid">
+            <!-- Demo 1 -->
+            <div class="demo">
+                <div class="demo-header">
+                    <div class="demo-number">1</div>
+                    <h2 class="demo-title">Tooltip in 5 Lines</h2>
+                    <p class="demo-description">A tooltip that auto-centers above any button. Zero JavaScript. Zero math.</p>
+                </div>
+
+                <div class="demo-area">
+                    <button class="btn-1">Hover me</button>
+                    <div class="tooltip-1">Perfect alignment ✨</div>
+                </div>
+
+                <button class="code-toggle" onclick="toggleCode(this)">View Code</button>
+                <div class="code-block">
+                    <code><span class="comment">/* Step 1: Name the anchor */</span>
+.button {
+    <span class="highlight">anchor-name: --my-btn;</span>
+}
+
+<span class="comment">/* Step 2: Position relative to it */</span>
+.tooltip {
+    position: absolute;
+    <span class="highlight">position-anchor: --my-btn;</span>
+    <span class="highlight">bottom: calc(anchor(top) - 12px);</span>
+    <span class="highlight">left: anchor(center);</span>
+    translate: -50% 0;
+}</code>
+                </div>
+            </div>
+
+            <!-- Demo 2 -->
+            <div class="demo">
+                <div class="demo-header">
+                    <div class="demo-number">2</div>
+                    <h2 class="demo-title">Side Popover</h2>
+                    <p class="demo-description">Content appears to the right, vertically centered. Adapts to any trigger size.</p>
+                </div>
+
+                <div class="demo-area">
+                    <div class="trigger-2">💡</div>
+                    <div class="popover-2">
+                        <strong>Pro tip:</strong><br>
+                        Anchor positioning handles all the alignment math automatically!
+                    </div>
+                </div>
+
+                <button class="code-toggle" onclick="toggleCode(this)">View Code</button>
+                <div class="code-block">
+                    <code>.trigger {
+    <span class="highlight">anchor-name: --trigger;</span>
+}
+
+.popover {
+    position: absolute;
+    <span class="highlight">position-anchor: --trigger;</span>
+    <span class="highlight">left: calc(anchor(right) + 20px);</span>
+    <span class="highlight">top: anchor(center);</span>
+    translate: 0 -50%;
+}</code>
+                </div>
+            </div>
+
+            <!-- Demo 3 -->
+            <div class="demo">
+                <div class="demo-header">
+                    <div class="demo-number">3</div>
+                    <h2 class="demo-title">Dropdown Menu</h2>
+                    <p class="demo-description">Menu anchors to button's bottom edge. Aligns perfectly on left side.</p>
+                </div>
+
+                <div class="demo-area">
+                    <button class="menu-btn-3" onclick="this.focus()">Actions ▼</button>
+                    <div class="dropdown-3">
+                        <a href="#">Edit</a>
+                        <a href="#">Share</a>
+                        <a href="#">Delete</a>
+                    </div>
+                </div>
+
+                <button class="code-toggle" onclick="toggleCode(this)">View Code</button>
+                <div class="code-block">
+                    <code>.button {
+    <span class="highlight">anchor-name: --menu;</span>
+}
+
+.dropdown {
+    position: absolute;
+    <span class="highlight">position-anchor: --menu;</span>
+    <span class="highlight">top: calc(anchor(bottom) + 8px);</span>
+    <span class="highlight">left: anchor(left);</span>
+}</code>
+                </div>
+            </div>
+
+            <!-- Demo 4 -->
+            <div class="demo">
+                <div class="demo-header">
+                    <div class="demo-number">4</div>
+                    <h2 class="demo-title">Badge Indicator</h2>
+                    <p class="demo-description">Notification badge pins to top-right corner. Stays there no matter the card size.</p>
+                </div>
+
+                <div class="demo-area">
+                    <div class="card-4">
+                        <h3 style="margin: 0; font-size: 1.2rem;">Messages</h3>
+                        <p style="margin: 10px 0 0; opacity: 0.8; font-size: 0.9rem;">You have new notifications</p>
+                    </div>
+                    <div class="badge-4">5</div>
+                </div>
+
+                <button class="code-toggle" onclick="toggleCode(this)">View Code</button>
+                <div class="code-block">
+                    <code>.card {
+    <span class="highlight">anchor-name: --card;</span>
+}
+
+.badge {
+    position: absolute;
+    <span class="highlight">position-anchor: --card;</span>
+    <span class="highlight">top: anchor(top);</span>
+    <span class="highlight">left: anchor(right);</span>
+    translate: -50% -50%;
+}</code>
+                </div>
+            </div>
+
+            <!-- Demo 5 -->
+            <div class="demo">
+                <div class="demo-header">
+                    <div class="demo-number">5</div>
+                    <h2 class="demo-title">Floating Label</h2>
+                    <p class="demo-description">Label appears above input when focused or filled. Pure CSS form enhancement.</p>
+                </div>
+
+                <div class="demo-area">
+                    <input type="text" class="input-5" placeholder="Type something...">
+                    <div class="label-5">Email address</div>
+                </div>
+
+                <button class="code-toggle" onclick="toggleCode(this)">View Code</button>
+                <div class="code-block">
+                    <code>.input {
+    <span class="highlight">anchor-name: --input;</span>
+}
+
+.label {
+    position: absolute;
+    <span class="highlight">position-anchor: --input;</span>
+    <span class="highlight">bottom: calc(anchor(top) - 8px);</span>
+    <span class="highlight">left: anchor(left);</span>
+}
+
+<span class="comment">/* Show on focus */</span>
+.input:focus + .label {
+    opacity: 1;
+}</code>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleCode(button) {
+            const codeBlock = button.nextElementSibling;
+            codeBlock.classList.toggle('active');
+            button.textContent = codeBlock.classList.contains('active') ? 'Hide Code' : 'View Code';
+        }
+    </script>
+</body>
+</html>
